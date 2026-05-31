@@ -9,34 +9,26 @@ import java.net.URLDecoder;
 public class ThreeKingdom {
 
     public static void main(String[] args) throws IOException {
-        // 在 8080 端口启动你专属的网页服务器
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         
-        // 绑定核心读取与技能查找逻辑
         server.createContext("/", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
                 
-                // ------------------ 【核心：读取你输入的特殊名词】 ------------------
                 String query = exchange.getRequestURI().getQuery();
                 String inputName = ""; 
-                String skillIntroduction = "请在上方输入武将技能内的特殊名词。"; // 默认提示信息
+                String skillIntroduction = "请在上方输入武将技能内的特殊名词。"; 
 
-                // 检测你在网页输入框里是否提交了内容
                 if (query != null && query.contains("name=")) {
                     try {
                         String rawName = query.split("name=")[1].split("&")[0];
-                        // 读取你在输入框里打的字，还原成干净的中文
                         inputName = URLDecoder.decode(rawName, "UTF-8").trim();
                     } catch (Exception e) {
                         skillIntroduction = "读取输入错误。";
                     }
                 }
-                // -----------------------------------------------------------
 
-                // ------------------ 【核心：根据输入读取技能（匹配逻辑）】 ------------------
                 if (!inputName.isEmpty()) {
-                    // Java 根据你刚才输入的变量 inputName 进行 switch 分支匹配
                     switch (inputName) {
                         case "无双":
                             skillIntroduction = "<strong>【无双】</strong>：锁定技，①当你使用【杀】指定一名角色为目标后，其需使用两张【闪】才能抵消；②当你使用【决斗】指定其他角色为目标后，或成为其他角色使用【决斗】的目标后，其每次响应需打出两张【杀】。";
@@ -49,14 +41,14 @@ public class ThreeKingdom {
                                     + "• <strong>【倾国】</strong>：可以将任意一张黑色手牌当做【闪】使用或打出。<br>"
                                     + "• <strong>【伤逝】</strong>：锁定技，当手牌数小于已损失的体力值时，立刻将手牌补至等同于已损失体力值的数量。<br>"
                                     + "• <strong>【制衡】</strong>：出牌阶段限一次，弃置任意数量的牌，然后摸等同数量的牌。";
-                            break; // 【修复：补上了原本缺失的 break】
+                            break; 
                             
                         case "奇才":
                             skillIntroduction = "<strong>【奇才】</strong>：锁定技，你使用锦囊牌无距离限制；当你使用的锦囊牌进入弃牌堆时，若此牌是本回合你使用的第一张锦囊牌，你获得之。（线上版的效果）";
-                            break; // 【修复：将中文的 ； 改成了英文的 ;】
+                            break; 
                             
                         case "观星":
-                            skillIntroduction = "<strong>【观星】</strong>：准备阶段开始时，你可以观看牌堆顶的 X 张牌（X 为存活角色数且最多为 5），然后将其中任意数量 of 牌以任意顺序置于牌堆顶，将其余的牌以任意顺序置于牌堆底。(注：在界限突破版本中，若存活人数小于或等于 2，观看牌堆顶的数量会固定升级为 3 张。)";
+                            skillIntroduction = "<strong>【观星】</strong>：准备阶段开始时，你可以观看牌堆顶的 X 张牌（X 为存活角色数且最多为 5），然后将其中任意数量的牌以任意顺序置于牌堆顶，将其余的牌以任意顺序置于牌堆底。(注：在界限突破版本中，若存活人数小于或等于 2，观看牌堆顶的数量会固定升级为 3 张。)";
                             break;
                             
                         case "八卦阵":
@@ -96,7 +88,7 @@ public class ThreeKingdom {
                             break; 
                             
                         case "魂姿":
-                            skillIntroduction = "<strong>【魂姿】</strong>：觉醒技，准备阶段开始时，若你的体力值为1，你减1点体力上限，然后获得【英姿】和【英魂】。";
+                            skillIntroduction = "<strong>【魂姿】</strong>：指定一名玩家（自己除外）抽取X后丢1张牌或抽取1张牌后丢X （X为武将目前血量）";
                             break; 
                         
                         default: 
@@ -104,33 +96,23 @@ public class ThreeKingdom {
                             break;
                     }
                 }
-                // -----------------------------------------------------------
 
-                // ------------------ 【核心：在网页上画出界面】 ------------------
                 String htmlResponse = "<html>"
-                        + "<head>"
-                        + "  <meta charset='UTF-8'>"
-                        + "  <title>三国杀特殊名词查询系统</title>"
-                        + "</head>"
+                        + "<head><meta charset='UTF-8'><title>三国杀特殊名词查询系统</title></head>"
                         + "<body style='font-family: Arial, sans-serif; margin: 40px; text-align: center; background-color: #f7f9fa;'>"
                         + "  <div style='max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);'>"
-                        + "    <h2>⚔️ 三国杀特殊名词查询 ⚔️</h2>"
-                        + "    <br>"
+                        + "    <h2>⚔️ 三国杀特殊名词查询 ⚔️</h2><br>"
                         + "    <form action='/' method='get'>"
                         + "      <input type='text' name='name' placeholder='输入技能/装备（如：无双）' value='" + inputName + "' style='font-size: 16px; padding: 8px; width: 250px; border: 1px solid #ccc; border-radius: 4px;'>"
                         + "      <input type='submit' value='查询释义' style='font-size: 16px; padding: 8px 20px; margin-left: 10px; background-color: #5cb85c; color: white; border: none; border-radius: 4px; cursor: pointer;'>"
-                        + "    </form>"
-                        + "    <br><hr style='border: 0; border-top: 1px solid #eee;'>"
-                        + "    <br>"
+                        + "    </form><br><hr style='border: 0; border-top: 1px solid #eee;'><br>"
                         + "    <div style='padding: 20px; background-color: #f0f4f7; border-radius: 5px; text-align: left; font-size: 16px; line-height: 1.6; color: #333;'>"
                         + "      " + skillIntroduction
                         + "    </div>"
                         + "  </div>"
                         + "</body>"
                         + "</html>";
-                // -----------------------------------------------------------
 
-                // 把带有技能介绍的网页传回浏览器
                 exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
                 exchange.sendResponseHeaders(200, htmlResponse.getBytes("UTF-8").length);
                 
@@ -140,7 +122,6 @@ public class ThreeKingdom {
             }
         });
 
-        // 启动常驻服务
         server.start();
         System.out.println("系统已在 8080 端口跑起来了！");
     }
