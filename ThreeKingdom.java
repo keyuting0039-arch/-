@@ -20,7 +20,7 @@ public class ThreeKingdom {
                 // ------------------ 【核心：读取你输入的武将】 ------------------
                 String query = exchange.getRequestURI().getQuery();
                 String inputName = ""; 
-                String skillIntroduction = "请在上方输入武将名字查询技能介绍。"; // 默认提示信息
+                String skillIntroduction = "请在上方输入武将技能内的的特殊名词。"; // 默认提示信息
 
                 // 检测你在网页输入框里是否提交了内容
                 if (query != null && query.contains("name=")) {
@@ -36,16 +36,53 @@ public class ThreeKingdom {
 
                 // ------------------ 【核心：根据输入读取技能（匹配逻辑）】 ------------------
                 if (!inputName.isEmpty()) {
-                    // Java 在内存中匹配你刚才输入的那个东西
-                    if (inputName.equals("曹操")) {
-                        skillIntroduction = "<strong>【奸雄】</strong>：锁定技，每当你受到伤害后，你可以获得造成此伤害的牌。";
-                    } else if (inputName.equals("刘备")) {
-                        skillIntroduction = "<strong>【仁德】</strong>：出牌阶段限一次，你可以将任意张手牌交给其他角色。当你以此法交出的牌达到两张或更多时，你回复1点体力。";
-                    } else if (inputName.equals("孙权")) {
-                        skillIntroduction = "<strong>【制衡】</strong>：出牌阶段限一次，你可以弃置任意张牌，然后摸等量的牌。";
-                    } else {
-                        // 如果输入的不是这三个人
-                        skillIntroduction = "暂未收录武将 \"<span style='color:red;'>" + inputName + "</span>\" 的技能。请尝试输入：曹操、刘备 或 孙权。";
+                    // Java 根据你刚才输入的变量 inputName 进行 switch 分支匹配
+                    switch (inputName) {
+                        case "无双":
+                            skillIntroduction = "<strong>：锁定技，①当你使用【杀】指定一名角色为目标后，其需使用两张【闪】才能抵消；②当你使用【决斗】指定其他角色为目标后，或成为其他角色使用【决斗】的目标后，其每次响应需打出两张【杀】。";
+                            break; // 记得加 break，防止它穿透到下一个武将
+                        case "极略":
+                            skillIntroduction = "<strong>【鬼才】在任意角色判定牌生效前，打出一张手牌替换判定牌（改命控判定）。</strong>：【放逐】	受到伤害后，令一名角色摸等同于你已损失体力值的牌，然后该角色翻面。（强力兵法控场）。</strong>：【倾国】	可以将任意一张黑色手牌当做【闪】使用或打出（极强的回合外防御）。</strong>：【伤逝】锁定技，当手牌数小于已损失的体力值时，立刻将手牌补至等同于已损失体力值的数量。【制衡】出牌阶段限一次，弃置任意数量的牌，然后摸等同数量的牌。";
+                        case "奇才":
+                            skillIntroduction = "<strong> 锁定技，你使用锦囊牌无距离限制；当你使用的锦囊牌进入弃牌堆时，若此牌是本回合你使用的第一张锦囊牌，你获得之。（线上版的效果）";
+                            break；
+                        case "观星":
+                            skillIntroduction = "<strong> 准备阶段开始时，你可以观看牌堆顶的 $X$ 张牌（$X$ 为存活角色数且最多为 5），然后将其中任意数量的牌以任意顺序置于牌堆顶，将其余的牌以任意顺序置于牌堆底。(注：在界限突破版本中，若存活人数小于或等于 2，观看牌堆顶的数量会固定升级为 3 张。)";
+                            break;
+                        case "八卦阵":
+                            skillIntroduction = "<strong> 锁定技，每当你需要使用或打出一张【闪】时，你可以进行一次判定：若判定结果为红色（红桃或方块），则视为你使用或打出了一张【闪】。";
+                            break;
+                        case "枭姬":
+                            skillIntroduction = "<strong> 锁定技，每当你失去装备区里的一张装备牌时，你摸两张牌。";
+                            break; 
+                        case "乐不思蜀":
+                            skillIntroduction = "<strong> 将【乐不思蜀】放置于该角色的判定区里。该角色的判定阶段开始时，进行一次判定：若判定结果不为红桃，则跳过该角色的出牌阶段。";
+                            break; 
+                        case "挑衅":
+                            skillIntroduction = "<strong> 出牌阶段限一次，你可以选择一名攻击范围能包含你的其他角色，该角色须对你使用一张【杀】，否则你弃置其一张牌。";
+                            break; 
+                        case "激将":
+                            skillIntroduction = "<strong> 当你需要使用或打出一张【杀】时，你可以令其他蜀势力角色选择是否帮你打出一张【杀】（若有角色以此法打出【杀】，则视为你使用或打出了此【杀】）。";
+                            break; 
+                        case "兵粮寸断":
+                            skillIntroduction = "<strong> 将【兵粮寸断】放置于该角色的判定区里。该角色的判定阶段开始时，进行一次判定：若判定结果不为梅花，则跳过该角色的摸牌阶段。";
+                            break; 
+                        case "攻心":
+                            skillIntroduction = "<strong> 出牌阶段限一次，你可以观看一名其他角色的手牌，若其中有红桃牌，你可以选择其中一张：展示并弃置之，或展示并置于牌堆顶。";
+                            break; 
+                        case "马术":
+                            skillIntroduction = "<strong> 锁定技，你计算与其他角色的距离时，始终 -1。";
+                            break; 
+                        case "英姿":
+                            skillIntroduction = "<strong> 锁定技，摸牌阶段，你多摸一张牌；你的手牌上限始终等于你的体力上限，而非当前体力值。";
+                            break; 
+                        case "魂姿":
+                            skillIntroduction = "<strong> 指定一名玩家（自己除外）抽取X后丢1张牌或抽取1张牌后丢X （X为武将目前血量） ";
+                            break; 
+                        
+                        default: // 如果输入的武将名字不是上面这三个人，执行默认出牌逻辑
+                            skillIntroduction = "暂未收录武将 \"<span style='color:red;'>" + inputName + "</span>\" 的技能。请尝试输入：曹操、刘备 或 孙权。";
+                            break;
                     }
                 }
                 // -----------------------------------------------------------
